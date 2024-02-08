@@ -43,7 +43,22 @@ vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
 	vector< vector <float> > newGrid;
 
 	// your code here
+	int height = grid.size();
+	int width = grid[0].size();	
+	int area = height * width;
+	float belief_per_cell = 1.0 / area;
+	vector< vector<float> > beliefs;
+
+	// define beliefs matrix that will be filled with window
+	beliefs.resize(height, vector<float>(width));
+	for (int i = 0; i < height; i++){
+		for (int j = 0; j < width; j++) {
+			beliefs[i][j] = belief_per_cell;
+		}
+	}
 	
+	newGrid = beliefs;
+
 	return newGrid;
 }
 
@@ -91,7 +106,35 @@ vector< vector <float> > move(int dy, int dx,
 
   vector < vector <float> > newGrid;
 
-  // your code here
+	// your code here
+	int height = beliefs.size();
+	int width = beliefs[0].size();	vector<float> row;
+	float cell;
+	int new_i;
+	int new_j;
+
+	vector < vector <float> > newG;
+
+	// define beliefs matrix that will be filled with window
+	newGrid.resize(height, vector<float>(width));
+
+	for (int i = 0; i < height; i++){
+		row = beliefs[i];
+		for (int j = 0; j < width; j++){
+			cell = row[j];
+			if ((i + dy) > 0) {
+				new_i = (i + dy) % height;
+			} else {
+				new_i = ((i + dy + height) % height);}
+			// define if the module of i + dx results in negative value
+			if ((j + dx) > 0) {
+				new_j = (j + dx) % width;
+			}	else {
+				new_j = ((j + dx + width) % width) ;}
+			newGrid[new_i][new_j] = cell;
+		}
+	}
+
 
   return blur(newGrid, blurring);
 }
@@ -143,6 +186,22 @@ vector< vector <float> > sense(char color,
 	vector< vector <float> > newGrid;
 
 	// your code here
+	vector< vector <float> > new_beliefs;
+	int height;
+	int width;
+	int hit;
+	height = grid.size();
+	width = grid[0].size();
+
+	new_beliefs.resize(height, vector<float>(width));
+	for (int i = 0; i < height; i++){
+		for (int j = 0; j < width; j++) {
+			bool hit = (color == grid[i][j]);
+			new_beliefs[i][j] = beliefs[i][j] * (hit * p_hit + (1 - hit) * p_miss);
+		}
+	}
+
+	newGrid = new_beliefs;
 
 	return normalize(newGrid);
 }

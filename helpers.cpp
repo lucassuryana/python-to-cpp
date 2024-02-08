@@ -37,6 +37,20 @@ vector< vector<float> > normalize(vector< vector <float> > grid) {
 	vector< vector<float> > newGrid;
 
 	// todo - your code here
+	float total = 0.0; // define variable float
+	newGrid.resize(grid.size(), vector<float>(grid[0].size()));
+
+	for (int i = 0; i < grid.size(); i++){
+		for (int j = 0; j < grid[0].size(); j++) {
+			total += grid[i][j];
+		}
+	}
+
+	for (int i = 0; i < grid.size(); i++) {
+		for (int j = 0; j < grid[0].size(); j++) {
+			newGrid[i][j] = grid[i][j]/total;
+		}
+	}
 
 	return newGrid;
 }
@@ -79,6 +93,54 @@ vector < vector <float> > blur(vector < vector < float> > grid, float blurring) 
 	vector < vector <float> > newGrid;
 	
 	// your code here
+	// define variable
+	int new_i;
+	int new_j;
+
+	int height = grid.size();
+	int width = grid[0].size();
+	float center_prob = 1.0 - blurring;
+	float corner_prob = blurring / 12.0;
+	float adjacent_prob = blurring / 6.0;
+
+	vector< vector<float> > window = {
+		{corner_prob, adjacent_prob, corner_prob},
+		{adjacent_prob, center_prob, adjacent_prob},
+		{corner_prob, adjacent_prob, corner_prob}
+	};
+	newGrid.resize(height, vector<float>(width));
+
+/*
+	// define empty matrix that will be filled with window
+	emp_mat.resize(height, vector<float>(width));
+	for (int i = 0; i < height; i++){
+		for (int j = 0; j < width; j++) {
+			emp_mat[i][j] = 0.0;
+		}
+	}
+*/
+
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			float grid_val = grid[i][j];
+			for (int dx = -1; dx < 2; dx++) {
+				for (int dy = -1; dy < 2; dy++) {
+					float mult = window[dx+1][dy+1];
+					// define if the modulo of i + dy results in negative value
+					if ((i + dy) > 0) {
+						new_i = (i + dy) % height;
+					} else {
+						new_i = ((i + dy + height) % height) ;}
+					// define if the module of i + dx results in negative value
+					if ((i + dx) > 0) {
+						new_j = (j + dx) % width;
+					}	else {
+						new_j = ((j + dx + width) % width);}
+					newGrid[new_i][new_j] = newGrid[new_i][new_j] + mult * grid_val;					
+				}
+			}
+		}
+	}
 
 	return normalize(newGrid);
 }
