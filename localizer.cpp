@@ -187,11 +187,8 @@ vector< vector <float> > sense(char color,
 
 	// your code here
 	vector< vector <float> > new_beliefs;
-	int height;
-	int width;
-	int hit;
-	height = grid.size();
-	width = grid[0].size();
+	int height = grid.size();
+	int width = grid[0].size();
 
 	new_beliefs.resize(height, vector<float>(width));
 	for (int i = 0; i < height; i++){
